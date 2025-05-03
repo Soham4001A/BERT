@@ -12,6 +12,7 @@ from evaluate import evaluate_sst2, evaluate_squad
 from config import Config
 from bert_model import BERT
 
+
 def parse_args():
     parser = argparse.ArgumentParser(description="BERT Training Script")
     parser.add_argument("--prop", type=float, default=0.15, help="Proportion of tokens to mask in each sentence.")
