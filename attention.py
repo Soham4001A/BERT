@@ -109,7 +109,7 @@ class MultiHeadAttention(nn.Module):
         Returns:
             torch.Tensor: Updated hidden state after applying multi-head attention mechanism.
         """
-        attention_outputs: List[torch.Tensor] = [attention_head(query, key, value, mask=mask, training = training) for attention_head in self.attention_heads]
+        attention_outputs: List[torch.Tensor] = [attention_head(query, key, value, mask=mask) for attention_head in self.attention_heads]
         hidden_state: torch.Tensor = torch.cat(attention_outputs, dim=-1)
         hidden_state: torch.Tensor = self.fc(hidden_state)
         return hidden_state

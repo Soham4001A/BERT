@@ -60,7 +60,7 @@ class Encoder(nn.Module):
         x_norm2: torch.Tensor = self.norm2(hidden_state)
         feed_forward_output: torch.Tensor = self.feed_forward(x_norm2)
         x_enc: torch.Tensor = feed_forward_output + hidden_state
-        hidden_state: torch.Tensor = self.dropout(x_enc, training = training)
+        hidden_state: torch.Tensor = self.dropout(x_enc)
         
         return hidden_state
 
