@@ -10,6 +10,7 @@ from bert_trainer import BERTTrainer
 import wandb
 from evaluate import evaluate_sst2, evaluate_squad
 from config import Config
+from bert_model import BERT
 
 def parse_args():
     parser = argparse.ArgumentParser(description="BERT Training Script")

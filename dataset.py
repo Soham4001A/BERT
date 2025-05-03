@@ -5,6 +5,7 @@ import random as rd
 from math import ceil
 from torch.utils.data import DataLoader, Dataset
 from config import Config
+from tokenizer import EnglishDataTokenizer
 
 
 class CustomTextDataset(Dataset):
