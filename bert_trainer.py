@@ -5,6 +5,7 @@ from torch.utils.data import DataLoader
 from scheduled_optim import ScheduledOptim
 from config import Config
 from bert_model import BERT
+import wandb
 
 class BERTTrainer:
     """
@@ -130,6 +131,12 @@ class BERTTrainer:
             total_correct += correct
             total_element += data["is_next"].nelement()
 
+            if train and wandb.run is not None:
+                wandb.log({
+                    "step_loss": loss.item(),
+                    "step_accuracy": correct / data["is_next"].nelement()
+                })
+
             post_fix = {
                 "epoch": epoch,
                 "iter": i,
@@ -146,6 +153,47 @@ class BERTTrainer:
 
         print("Epoch %d, %s, avg_loss=" % (epoch, str_code), avg_loss / len(data_iter), "total_acc=",
               total_correct * 100.0 / total_element)
+    
+    def train_step(self, epoch: int) -> None:
+        """
+        Perform a single training step from the train_data DataLoader.
+        """
+        if not hasattr(self, "_data_iter") or self._data_iter is None:
+            self._data_iter = iter(self.train_data)
+
+        buffer: List = []
+        try:
+            while len(buffer) < self.batch_size:
+                buffer.extend(next(self._data_iter))
+        except StopIteration:
+            self._data_iter = iter(self.train_data)
+            return  # Reached end of data for this epoch
+
+        current_batch = buffer[:self.batch_size]
+        buffer = buffer[self.batch_size:]
+
+        data = self.process_batch(current_batch)
+        data = {key: value.to(self.device) for key, value in data.items()}
+
+        mask_lm_output, next_sent_output = self.model.forward(
+            data["bert_input"], data["segment_label"], training=True
+        )
+
+        next_loss = self.criterion(next_sent_output, data["is_next"])
+        mask_loss = self.criterion(mask_lm_output.transpose(1, 2), data["bert_label"])
+        loss = next_loss + mask_loss
+
+        self.optim.zero_grad()
+        loss.backward()
+        self.optim.step_and_update_lr()
+
+        correct = next_sent_output.argmax(dim=-1).eq(data["is_next"]).sum().item()
+
+        if wandb.run is not None:
+            wandb.log({
+                "step_loss": loss.item(),
+                "step_accuracy": correct / data["is_next"].nelement()
+            })
 
     def process_batch(self, samples: List[dict]) -> dict:
         """

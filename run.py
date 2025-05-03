@@ -101,19 +101,22 @@ def run(config):
 
     # Training loop
     for epoch in range(config.epochs):
-        # Train the model
-        trainer.train(epoch)
+        # Initialize global step counter
+        global_step = 0
+        # Per-step training loop
+        for step in range(len(train_dataset)):
+            trainer.train_step(epoch)
+            global_step += 1
 
-        # External evaluations
-        if config.use_wandb:
-            sst2_acc = evaluate_sst2(bert, tokenizer=trainer.tokenizer)
-            squad_f1, squad_em = evaluate_squad(bert, tokenizer=trainer.tokenizer)
-            wandb.log({
-                "epoch": epoch,
-                "sst2_acc": sst2_acc,
-                "squad_f1": squad_f1,
-                "squad_em": squad_em
-            })
+            if config.use_wandb and global_step % config.eval_every_n_steps == 0:
+                sst2_acc = evaluate_sst2(bert, tokenizer=trainer.tokenizer)
+                squad_f1, squad_em = evaluate_squad(bert, tokenizer=trainer.tokenizer)
+                wandb.log({
+                    "global_step": global_step,
+                    "sst2_acc": sst2_acc,
+                    "squad_f1": squad_f1,
+                    "squad_em": squad_em
+                })
 
         # Save the model
         trainer.save(epoch)
