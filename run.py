@@ -9,7 +9,7 @@ from dataset import CustomTextDataset
 from bert_trainer import BERTTrainer
 import wandb
 from evaluate import evaluate_sst2, evaluate_squad
-
+from config import Config
 
 def parse_args():
     parser = argparse.ArgumentParser(description="BERT Training Script")

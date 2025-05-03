@@ -4,6 +4,7 @@ from typing import List, Tuple, Dict
 import random as rd
 from math import ceil
 from torch.utils.data import DataLoader, Dataset
+from config import Config
 
 
 class CustomTextDataset(Dataset):
