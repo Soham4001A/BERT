@@ -30,7 +30,6 @@ def parse_args():
     parser.add_argument("--n_warmup_steps", type=int, default=10000, help="Number of warmup steps for the optimizer.")
     parser.add_argument("--weight_decay", type=float, default=0.01, help="Weight decay for the optimizer.")
     parser.add_argument("--lr", type=float, default=1e-4, help="Learning rate for the optimizer.")
-    parser.add_argument("--betas", type=tuple, default=(0.9, 0.999), help="Betas for the optimizer.")
     parser.add_argument("--cuda_devices", type=list, default=None, help="List of CUDA devices.")
     parser.add_argument("--with_cuda", type=bool, default=True, help="Flag to use CUDA.")
     parser.add_argument("--log_freq", type=int, default=10, help="Logging frequency.")
