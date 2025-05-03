@@ -55,7 +55,7 @@ class AttentionHead(nn.Module):
             att_scores: torch.Tensor = att_scores.masked_fill(mask.unsqueeze(1) == 0, -1e9)
 
         att_weights: torch.Tensor = F.softmax(att_scores, dim=-1)
-        att_weights: torch.Tensor = self.dropout(att_weights, training = training) 
+        att_weights: torch.Tensor = self.dropout(att_weights) 
         n_value: torch.Tensor = torch.matmul(att_weights, value)
 
         return n_value
