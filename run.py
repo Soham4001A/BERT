@@ -7,6 +7,8 @@ import numpy as np
 import argparse
 from dataset import CustomTextDataset
 from bert_trainer import BERTTrainer
+import wandb
+from evaluate import evaluate_sst2, evaluate_squad
 
 
 def parse_args():
@@ -37,6 +39,9 @@ def parse_args():
     parser.add_argument("--seed", type=int, default=0, help="Random seed for reproducibility.")
     parser.add_argument("--test_dataset", type=str, default=None, help="Path to the test dataset or None.")
     parser.add_argument("--epochs", type=int, default=1, help="Number of training epochs.")
+    parser.add_argument("--eval_every_n_steps", type=int, default=500, help="Evaluate on external tasks every N steps.")
+    parser.add_argument("--use_wandb", type=bool, default=True, help="Use Weights & Biases for logging.")
+    parser.add_argument("--wandb_project", type=str, default="bert-from-scratch", help="Weights & Biases project name.")
 
     return parser.parse_args()
 
@@ -67,6 +72,9 @@ def run(config):
     # Set random seeds
     set_seeds(config)
 
+    if config.use_wandb:
+        wandb.init(project=config.wandb_project, config=vars(config))
+
     print("Loading Train Dataset...")
 
     # Load training dataset
@@ -93,6 +101,17 @@ def run(config):
     for epoch in range(config.epochs):
         # Train the model
         trainer.train(epoch)
+
+        # External evaluations
+        if config.use_wandb:
+            sst2_acc = evaluate_sst2(bert, tokenizer=trainer.tokenizer)
+            squad_f1, squad_em = evaluate_squad(bert, tokenizer=trainer.tokenizer)
+            wandb.log({
+                "epoch": epoch,
+                "sst2_acc": sst2_acc,
+                "squad_f1": squad_f1,
+                "squad_em": squad_em
+            })
 
         # Save the model
         trainer.save(epoch)
@@ -130,7 +149,10 @@ if __name__ == "__main__":
         save_path=args.save_path,
         seed=args.seed,
         test_dataset=args.test_dataset,
-        epochs=args.epochs
+        epochs=args.epochs,
+        eval_every_n_steps=args.eval_every_n_steps,
+        use_wandb=args.use_wandb,
+        wandb_project=args.wandb_project,
     )
 
 

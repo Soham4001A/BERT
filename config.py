@@ -48,7 +48,7 @@ class Config:
                  vocab_size=30522, hidden_dropout_prob=0.1, num_heads=8, num_blocks=12, final_dropout_prob=0.5,
                 n_warmup_steps=10000, weight_decay=0.01, lr=1e-4, betas=(0.9, 0.999),
                  cuda_devices=None, with_cuda=True, log_freq=10, batch_size=64, save_path='tmp/checkpoints',
-                 seed=0, test_dataset=None, epochs=1):
+                 seed=0, test_dataset=None, epochs=1, eval_every_n_steps=500, use_wandb=True, wandb_project="bert-from-scratch"):
 
         # Dataset params
         self.prop = prop
@@ -90,3 +90,6 @@ class Config:
         self.test_dataset = test_dataset
         self.epochs = epochs
 
+        self.eval_every_n_steps = eval_every_n_steps
+        self.use_wandb = use_wandb
+        self.wandb_project = wandb_project
