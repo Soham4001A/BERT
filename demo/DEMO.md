@@ -18,7 +18,7 @@ I assume that you have a folder called projects and inside it is a project folde
 ```
 
 ## Download requirements
-```!pip install transformers```
+```! transformers```
 
 ## Overview
 

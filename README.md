@@ -71,7 +71,7 @@ You can read the full explanation of all components in [Demo](https://github.com
 3. Install project dependencies:
 
    ```bash
-   pip install -r requirements.txt
+    -r requirements.txt
    ```
 4. Download and prepare Dataset: You can go and review the demo.You can work on the same dataset, change it or adjust your preferences. However, You can download the dataset directly from [here](https://ai.stanford.edu/~amaas/data/sentiment/aclImdb_v1.tar.gz).
 
