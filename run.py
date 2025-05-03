@@ -100,11 +100,11 @@ def run(config):
     trainer = BERTTrainer(config, bert, optim_schedule, train_data_loader, test_data_loader)
 
     # Training loop
+    global_step = 0
     for epoch in range(config.epochs):
-        # Initialize global step counter
-        global_step = 0
-        # Per-step training loop
-        for step in range(len(train_dataset)):
+        trainer._data_iter = None  # Reset data iterator for each epoch
+        steps_in_epoch = len(train_dataset) // config.batch_size
+        for step in range(steps_in_epoch):
             trainer.train_step(epoch)
             global_step += 1
 
@@ -112,6 +112,7 @@ def run(config):
             if global_step % 10 == 0:
                 print(f"[Epoch {epoch}] Step {global_step}: Loss and accuracy logged to wandb.")
 
+            # Evaluate periodically
             if config.use_wandb and global_step % config.eval_every_n_steps == 0:
                 sst2_acc = evaluate_sst2(bert, tokenizer=trainer.tokenizer)
                 squad_f1, squad_em = evaluate_squad(bert, tokenizer=trainer.tokenizer)
