@@ -58,7 +58,7 @@ class BERT(nn.Module):
         mask = self.embed_layer.forward_mask(input_ids)
 
         for encoder_layer in self.encoder:
-            x_enc: torch.Tensor = encoder_layer(x_enc, mask, training=training)
+            x_enc: torch.Tensor = encoder_layer(x_enc, mask)
 
         mlm_logits: torch.Tensor = self.mlm_prediction_layer(x_enc)
         nsp_logits: torch.Tensor = self.nsp_classifier(x_enc[:, 0, :])
