@@ -42,7 +42,7 @@ class BERT(nn.Module):
         self.nsp_classifier: nn.Linear = nn.Linear(self.hidden_size, 2)
         self.softmax: nn.LogSoftmax = nn.LogSoftmax(dim=-1)
 
-    def forward(self, input_ids: torch.Tensor, segment_ids: torch.Tensor, training: bool = False) -> Tuple[torch.Tensor, torch.Tensor]:
+    def forward(self, input_ids: torch.Tensor, segment_ids: torch.Tensor, training: bool = False) -> tuple[torch.Tensor, torch.Tensor]:
         """
         Forward pass of the BERT model.
 
