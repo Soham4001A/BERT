@@ -108,6 +108,10 @@ def run(config):
             trainer.train_step(epoch)
             global_step += 1
 
+            # Print progress every 10 steps
+            if global_step % 10 == 0:
+                print(f"[Epoch {epoch}] Step {global_step}: Loss and accuracy logged to wandb.")
+
             if config.use_wandb and global_step % config.eval_every_n_steps == 0:
                 sst2_acc = evaluate_sst2(bert, tokenizer=trainer.tokenizer)
                 squad_f1, squad_em = evaluate_squad(bert, tokenizer=trainer.tokenizer)
